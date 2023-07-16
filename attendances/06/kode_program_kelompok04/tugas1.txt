@@ -1,0 +1,53 @@
+//Penggunaan sensor suhu LM35
+#include "DHTesp.h"
+const int DHT_PIN = 15;
+DHTesp dhtSensor;
+float suhu = 0;
+
+//Penggunaan sensor cahaya LDR
+#define cahayaPin 14
+int cahaya = 0;
+
+//Penggunaan LED RGB tambahan
+#define redPin 25
+#define greenPin 26
+#define bluePin 27
+
+void setup()
+{
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+  dhtSensor.setup(DHT_PIN, DHTesp::DHT22);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  //Membaca nilai sensor suhu LM35
+  TempAndHumidity data = dhtSensor.getTempAndHumidity();
+  suhu = data.temperature;
+
+  //Membaca nilai sensor cahaya LDR
+  cahaya = analogRead(cahayaPin);
+
+  //Membuat kondisi untuk LED kuning
+  if(cahaya > 1000 && suhu < 25){
+    digitalWrite(bluePin, HIGH);
+    delay(200);
+    digitalWrite(bluePin, LOW);
+    delay(200);
+  }else{
+    digitalWrite(redPin, HIGH);
+  }
+
+//Menampilkan nilai sensor suhu pada monitor serial
+Serial.print("Suhu: ");
+Serial.println(suhu);
+
+//Menampilkan nilai sensor cahaya pada monitor serial
+Serial.print("Cahaya: ");
+Serial.println(cahaya);
+
+delay(1000);
+}
